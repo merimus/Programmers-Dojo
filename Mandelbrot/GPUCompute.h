@@ -27,24 +27,17 @@ public:
     void compute() {
         auto start = high_resolution_clock::now();
         
-        unsigned int gradient;
-        glGenTextures(1, &gradient);
-        glBindTexture(GL_TEXTURE_1D, gradient);
-        glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA, 1024, 1, 0, GL_UNSIGNED_BYTE, mb.gradient);
-
-        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
         glBindTexture(GL_TEXTURE_2D, mb.tex_output);
         glUseProgram(computeProgram);
         glUniform1f(glGetUniformLocation(computeProgram, "cxmin"), mb.cxmin.convert_to<float>());
         glUniform1f(glGetUniformLocation(computeProgram, "cxmax"), mb.cxmax.convert_to<float>());
         glUniform1f(glGetUniformLocation(computeProgram, "cymin"), mb.cymin.convert_to<float>());
         glUniform1f(glGetUniformLocation(computeProgram, "cymax"), mb.cymax.convert_to<float>());
-        glUniform1i(glGetUniformLocation(computeProgram, "gradient"), gradient);
+        glUniform1i(glGetUniformLocation(computeProgram, "resolution"), mb.resolution);
+        glUniform1i(glGetUniformLocation(computeProgram, "max_iterations"), mb.max_iterations);
 
-        glDispatchCompute(2048 / 16, 2048 / 16, 1);
+        glDispatchCompute(2048 / mb.resolution / 16, 2048 / mb.resolution / 16, 1);
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
         frame_time_ = duration_cast<microseconds>(high_resolution_clock::now() - start);
-
-        glDeleteTextures(1, &gradient);
     }
 };

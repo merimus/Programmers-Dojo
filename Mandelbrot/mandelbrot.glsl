@@ -11,14 +11,15 @@ uniform float cxmin;
 uniform float cxmax;
 uniform float cymin;
 uniform float cymax;
+uniform int resolution;
+uniform int max_iterations;
 uniform usampler1D gradient;
 
 void main() {
     vec2 c = vec2(cxmin, cymin) + 
-                  gl_GlobalInvocationID.xy / vec2(imageSize(img)) * 
+                  gl_GlobalInvocationID.xy / vec2(imageSize(img) / resolution) * 
                   vec2(cxmax - cxmin, cymax - cymin);
     vec2 z = vec2(0.0, 0.0);
-    uint max_iterations = 256;
 
     uint iterations;
     for (iterations = 0; iterations < max_iterations && cabs(z) < 20.0; ++iterations) {

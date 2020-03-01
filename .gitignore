@@ -3,3 +3,5 @@
 ################################################################################
 
 /.vs
+/Mandelbrot/out/build/x64-Debug
+/Mandelbrot/CMakeSettings.json
